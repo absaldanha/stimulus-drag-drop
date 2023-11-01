@@ -1,0 +1,16 @@
+version: '3'
+
+x-common: &common
+  build:
+    context: .
+    dockerfile: ./.dockerdev/Dockerfile.dev
+  image: stimulus-drag-drop:1.0.0
+  stdin_open: true
+  tty: true
+  tmpfs:
+    - /tmp
+
+services:
+  bash:
+    <<: *common
+    command: bash
