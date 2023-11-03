@@ -1,0 +1,34 @@
+{
+  "name": "@absaldanha/stimulus-drag-drop",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "Alexandre Saldanha",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/absaldanha/stimulus-drag-drop.git"
+  },
+  "types": "dist/types/index.d.ts",
+  "main": "dist/stimulus_drag_drop.umd.js",
+  "module": "dist/stimulus_drag_drop.js",
+  "files": [
+    "dist/stimulus_drag_drop.js",
+    "dist/stimulus_drag_drop.umd.js",
+    "dist/types/**/*"
+  ],
+  "scripts": {
+    "types": "tsc --noEmit false --declaration true --emitDeclarationOnly true --outDir dist/types",
+    "lint": "eslint . --ext .ts"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/parser": "^5.59.6",
+    "eslint": "^8.40.0",
+    "typescript": "^5.2.2",
+    "prettier": "^3.0.3",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1"
+  },
+  "dependencies": {
+    "@hotwired/stimulus": ">= 3.2"
+  }
+}
