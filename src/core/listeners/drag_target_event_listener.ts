@@ -1,7 +1,7 @@
-import { DragEventListener } from "./drag_event_listener";
-import { DraggableEvent } from "../events";
+import { DragEventListener } from "./drag_event_listener"
+import { DraggableEvent } from "../events"
 
-import type { DragTargetEventName } from "../types";
+import type { DragTargetEventName } from "../types"
 
 export class DragTargetEventListener extends DragEventListener<DragTargetEventName> {
   constructor(eventTarget: EventTarget, options: AddEventListenerOptions = {}) {
