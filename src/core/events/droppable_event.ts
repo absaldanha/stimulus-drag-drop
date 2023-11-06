@@ -1,31 +1,20 @@
+import { CustomDragEvent } from "./custom_drag_event"
 import { DRAGGABLE_DATA_TRANSFER_KEY, DROPPABLE_DATA_TRANSFER_KEY } from "../constants"
 import { getControllerFromDataPayload, controllerDataPayload } from "../utils"
+
 import type { Controller } from "@hotwired/stimulus"
-import type { DroppableEventName } from "../types"
+import type { CustomDragEventInit } from "./custom_drag_event"
+import type { DropTargetEventName, DroppableEventName } from "../types"
 
-interface DroppableEventDetail {
-  originalEvent: DragEvent
-}
+export class DroppableEvent extends CustomDragEvent {
+  protected static eventPrefix = "droppable"
 
-interface DroppableEventInit extends CustomEventInit<DroppableEventDetail> {
-  detail: DroppableEventDetail
-}
-
-export class DroppableEvent extends CustomEvent<DroppableEventDetail> {
-  private originalEvent: DragEvent
-
-  constructor(type: DroppableEventName, options: DroppableEventInit) {
-    super(type, options)
-
-    const {
-      detail: { originalEvent },
-    } = options
-
-    this.originalEvent = originalEvent
+  static eventName(eventName: DropTargetEventName) {
+    return super.eventName(eventName) as DroppableEventName
   }
 
-  get dataTransfer() {
-    return this.originalEvent.dataTransfer
+  constructor(type: DroppableEventName, options: CustomDragEventInit) {
+    super(type, options)
   }
 
   get draggable(): Controller | null {
@@ -44,20 +33,5 @@ export class DroppableEvent extends CustomEvent<DroppableEventDetail> {
     const payload = this.dataTransfer?.getData(DROPPABLE_DATA_TRANSFER_KEY)
 
     return getControllerFromDataPayload(payload)
-  }
-
-  preventDefault() {
-    super.preventDefault()
-    this.originalEvent.preventDefault()
-  }
-
-  stopPropagation() {
-    super.stopPropagation()
-    this.originalEvent.stopPropagation()
-  }
-
-  stopImmediatePropagation() {
-    super.stopImmediatePropagation()
-    this.originalEvent.stopImmediatePropagation()
   }
 }

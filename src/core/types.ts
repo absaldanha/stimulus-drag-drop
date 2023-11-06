@@ -1,29 +1,30 @@
 import type { Controller } from "@hotwired/stimulus"
 import type { DraggableEvent, DroppableEvent } from "./events"
 
-export type DragEventName = "drag" | "dragstart" | "dragend"
+const DRAG_EVENT_NAMES = ["drag", "dragstart", "dragend", "dragover", "dragenter", "dragleave", "drop"] as const
+const CUSTOM_DRAG_EVENT_NAMES = [
+  "draggable:drag", "draggable:dragstart", "draggable:dragend",
+  "droppable:dragover", "droppable:dragenter", "droppable:dragleave", "droppable:drop"
+] as const
+const METHOD_NAMES = [
+  "drag", "dragStart", "dragEnd",
+  "dragOver", "dragEnter", "dragLeave", "drop"
+] as const
 
-export type DropEventName = "dragover" | "dragenter" | "dragleave" | "drop"
+export type DragEventName = typeof DRAG_EVENT_NAMES[number]
 
-export type DraggableEventName = "draggable:drag" | "draggable:dragstart" | "draggable:dragend"
+export type DragTargetEventName = Extract<DragEventName, "drag" | "dragstart" | "dragend">
 
-export type DroppableEventName = "droppable:dragover" | "droppable:dragenter" | "droppable:dragleave" | "droppable:drop"
+export type DropTargetEventName = Extract<DragEventName, "dragover" | "dragenter" | "dragleave" | "drop">
 
-export type DraggableMethodName = "drag" | "dragStart" | "dragEnd"
+export type CustomDragEventName = typeof CUSTOM_DRAG_EVENT_NAMES[number]
 
-export type DroppableMethodName = "dragOver" | "dragEnter" | "dragLeave" | "drop"
+export type DraggableEventName = Extract<CustomDragEventName, "draggable:drag" | "draggable:dragstart" | "draggable:dragend">
 
-export interface DraggableController extends Controller {
-  drag?: (event: DraggableEvent) => void
-  dragStart?: (event: DraggableEvent) => void
-  dragEnd?: (event: DraggableEvent) => void
-}
+export type DroppableEventName = Extract<CustomDragEventName, "droppable:dragover" | "droppable:dragenter" | "droppable:dragleave" | "droppable:drop">
 
-export interface DroppableController extends Controller {
-  dragOver?: (event: DroppableEvent) => void
-  dragEnter?: (event: DroppableEvent) => void
-  dragLeave?: (event: DroppableEvent) => void
-  drop?: (event: DroppableEvent) => void
-}
+export type ControllerMethodName = typeof METHOD_NAMES[number]
 
-export type ContextController = DraggableController | DroppableController
+export type DraggableMethodName = Extract<ControllerMethodName, "drag" | "dragStart" | "dragEnd">
+
+export type DroppableMethodName = Extract<ControllerMethodName, "dragOver" | "dragEnter" | "dragLeave" | "drop">

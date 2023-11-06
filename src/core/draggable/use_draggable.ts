@@ -1,7 +1,8 @@
 import { Observer } from "./observer"
-import { DraggableController } from "../types"
 
-export function useDraggable(controller: DraggableController) {
+import type { Controller } from "@hotwired/stimulus"
+
+export function useDraggable(controller: Controller) {
   const observer = new Observer(controller)
   const controllerDisconnect = controller.disconnect
 

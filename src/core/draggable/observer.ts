@@ -1,69 +1,33 @@
-import { DragEventListener, DraggableEventListener } from "../listeners"
-import { buildDraggableEventName } from "../utils"
+import { DragTargetEventListener, DraggableEventListener } from "../listeners"
 
-import type { DragEventName, DraggableMethodName, DraggableController } from "../types"
+import type { Controller } from "@hotwired/stimulus"
 
 export class Observer {
-  private controller: DraggableController
   private started: boolean
-  private dragEventListeners: Set<DragEventListener>
-  private draggableEventListeners: Set<DraggableEventListener>
+  private dragListener: DragTargetEventListener
+  private draggableListener: DraggableEventListener
 
-  static eventMap = new Map<DragEventName, DraggableMethodName>([
-    ["dragstart", "dragStart"],
-    ["dragend", "dragEnd"],
-    ["drag", "drag"],
-  ])
-
-  constructor(controller: DraggableController) {
-    this.controller = controller
+  constructor(controller: Controller) {
     this.started = false
-    this.dragEventListeners = new Set()
-    this.draggableEventListeners = new Set()
-
-    this.setup()
+    this.dragListener = new DragTargetEventListener(controller.element, { capture: true })
+    this.draggableListener = new DraggableEventListener(controller)
   }
 
   start() {
     if (!this.started) {
-      this.connectListeners()
+      this.dragListener.connect()
+      this.draggableListener.connect()
+
       this.started = true
     }
   }
 
   stop() {
     if (this.started) {
-      this.disconnectListeners()
+      this.dragListener.disconnect()
+      this.draggableListener.disconnect()
+
       this.started = false
     }
-  }
-
-  private setup() {
-    for (const [dragEventName, draggableMethodName] of Observer.eventMap.entries()) {
-      const method = this.controller[draggableMethodName]
-
-      if (typeof method === "function") {
-        const draggableEventType = buildDraggableEventName(dragEventName)
-        const dragListener = new DragEventListener(this.element, dragEventName, { capture: true })
-        const draggableListener = new DraggableEventListener(this.controller, draggableEventType, draggableMethodName)
-
-        this.dragEventListeners.add(dragListener)
-        this.draggableEventListeners.add(draggableListener)
-      }
-    }
-  }
-
-  private connectListeners() {
-    this.dragEventListeners.forEach((listener) => listener.connect())
-    this.draggableEventListeners.forEach((listener) => listener.connect())
-  }
-
-  private disconnectListeners() {
-    this.dragEventListeners.forEach((listener) => listener.disconnect())
-    this.draggableEventListeners.forEach((listener) => listener.disconnect())
-  }
-
-  private get element() {
-    return this.controller.element
   }
 }
