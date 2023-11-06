@@ -1,14 +1,14 @@
 import { Observer as DraggableObserver } from "../draggable"
 import { Observer as DroppableObserver } from "../droppable"
 
-import type { ContextController } from "../types"
+import type { Controller } from "@hotwired/stimulus"
 
 export class Observer {
   private started: boolean
   private draggableObserver: DraggableObserver
   private droppableObserver: DroppableObserver
 
-  constructor(controller: ContextController) {
+  constructor(controller: Controller) {
     this.started = false
     this.draggableObserver = new DraggableObserver(controller)
     this.droppableObserver = new DroppableObserver(controller)

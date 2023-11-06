@@ -1,43 +1,19 @@
-import type { DraggableEvent } from "../events"
-import type { DraggableMethodName, DraggableEventName, DraggableController } from "../types"
+import { CustomDragEventListener } from "./custom_drag_event_listener";
 
-export class DraggableEventListener {
-  private controller: DraggableController
-  private eventName: DraggableEventName
-  private methodName: DraggableMethodName
-  private options: AddEventListenerOptions
+import type { Controller } from "@hotwired/stimulus";
+import type { DraggableEventName, DraggableMethodName } from "../types";
 
-  constructor(
-    controller: DraggableController,
-    eventName: DraggableEventName,
-    methodName: DraggableMethodName,
-    options: AddEventListenerOptions = {},
-  ) {
-    this.controller = controller
-    this.eventName = eventName
-    this.methodName = methodName
-    this.options = options
-  }
+const draggableEventMap = new Map<DraggableEventName, DraggableMethodName>([
+  ["draggable:drag", "drag"],
+  ["draggable:dragstart", "dragStart"],
+  ["draggable:dragend", "dragEnd"]
+])
 
-  connect() {
-    this.element.addEventListener(this.eventName, this, this.options)
-  }
-
-  disconnect() {
-    this.element.removeEventListener(this.eventName, this, this.options)
-  }
-
-  handleEvent(event: DraggableEvent) {
-    if (typeof this.method === "function") {
-      this.method.call(this.controller, event)
-    }
-  }
-
-  private get element() {
-    return this.controller.element
-  }
-
-  private get method() {
-    return this.controller[this.methodName]
+export class DraggableEventListener extends CustomDragEventListener<
+  DraggableEventName,
+  DraggableMethodName
+> {
+  constructor(controller: Controller) {
+    super(controller, draggableEventMap)
   }
 }

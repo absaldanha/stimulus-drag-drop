@@ -1,7 +1,8 @@
 import { Observer } from "./observer"
-import type { DroppableController } from "../types"
 
-export function useDroppable(controller: DroppableController) {
+import type { Controller } from "@hotwired/stimulus"
+
+export function useDroppable(controller: Controller) {
   const observer = new Observer(controller)
   const controllerDisconnect = controller.disconnect
 

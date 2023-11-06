@@ -1,7 +1,8 @@
 import { Observer } from "./observer"
-import type { ContextController } from "../types"
 
-export function useDragContext(controller: ContextController) {
+import type { Controller } from "@hotwired/stimulus"
+
+export function useDragContext(controller: Controller) {
   const observer = new Observer(controller)
   const controllerDisconnect = controller.disconnect
 
