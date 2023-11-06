@@ -1,23 +1,22 @@
-import { Observer as DraggableObserver } from "../draggable"
-import { Observer as DroppableObserver } from "../droppable"
+import { DraggableEventListener, DroppableEventListener } from "../listeners"
 
 import type { Controller } from "@hotwired/stimulus"
 
 export class Observer {
   private started: boolean
-  private draggableObserver: DraggableObserver
-  private droppableObserver: DroppableObserver
+  private draggableListener: DraggableEventListener
+  private droppableListener: DroppableEventListener
 
   constructor(controller: Controller) {
     this.started = false
-    this.draggableObserver = new DraggableObserver(controller)
-    this.droppableObserver = new DroppableObserver(controller)
+    this.draggableListener = new DraggableEventListener(controller)
+    this.droppableListener = new DroppableEventListener(controller)
   }
 
   start() {
     if (!this.started) {
-      this.draggableObserver.start()
-      this.droppableObserver.start()
+      this.draggableListener.connect()
+      this.droppableListener.connect()
 
       this.started = true
     }
@@ -25,8 +24,8 @@ export class Observer {
 
   stop() {
     if (this.started) {
-      this.draggableObserver.stop()
-      this.droppableObserver.stop()
+      this.draggableListener.disconnect()
+      this.droppableListener.disconnect()
 
       this.started = false
     }

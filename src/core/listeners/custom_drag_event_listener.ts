@@ -4,8 +4,9 @@ import type { ControllerMethodName, CustomDragEventName } from "../types"
 
 export class CustomDragEventListener<
   TEventName extends CustomDragEventName = CustomDragEventName,
-  TMethodName extends ControllerMethodName = ControllerMethodName
-> implements EventListenerObject {
+  TMethodName extends ControllerMethodName = ControllerMethodName,
+> implements EventListenerObject
+{
   readonly controller: Controller
   readonly eventMap: Map<TEventName, TMethodName>
   readonly options: AddEventListenerOptions
