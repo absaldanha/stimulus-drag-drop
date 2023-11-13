@@ -1,9 +1,9 @@
-import { Observer } from "./observer"
+import { DraggableContextObserver } from "./observers"
 
-import type { Controller } from "@hotwired/stimulus"
+import type { ExtendedController } from "./listeners"
 
-export function useDraggable(controller: Controller) {
-  const observer = new Observer(controller)
+export function useDraggableContext(controller: ExtendedController) {
+  const observer = new DraggableContextObserver(controller)
   const controllerDisconnect = controller.disconnect
 
   const disconnect = () => {

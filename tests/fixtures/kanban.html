@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Kanban</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "@hotwired/stimulus": "../../node_modules/@hotwired/stimulus/dist/stimulus.js"
+        }
+      }
+    </script>
+    <script type="module" src="/tests/fixtures/index.js"></script>
+  </head>
+  <body>
+    <h1>Kanban</h1>
+
+    <div id="board_1" data-testid="board" data-controller="board">
+      <div id="column_1" data-testid="column" data-controller="column">
+        <p>To Do</p>
+
+        <ul>
+          <li id="item_1" data-testid="item" data-controller="item">
+            Setup CI
+          </li>
+
+          <li id="item_2" data-testid="item" data-controller="item">
+            CRUD Projects
+          </li>
+        </ul>
+      </div>
+
+      <div id="column_2" data-testid="column" data-controller="column">
+        <p>Doing</p>
+
+        <ul>
+          <li id="item_3" data-testid="item" data-controller="item">
+            CRUD Users
+          </li>
+        </ul>
+      </div>
+
+      <div id="column_3" data-testid="column" data-controller="column">
+        <p>Done</p>
+
+        <ul>
+          <li id="item_4" data-testid="item" data-controller="item">
+            Setup project
+          </li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

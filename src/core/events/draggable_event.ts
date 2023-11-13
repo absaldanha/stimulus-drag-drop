@@ -1,20 +1,28 @@
-import { CustomDragEvent } from "./custom_drag_event"
+import {
+  CustomDragEvent,
+  type CustomDragEventPrefix,
+  type DragEventName,
+  type CustomDragEventName,
+} from "./custom_drag_event"
 import { DRAGGABLE_DATA_TRANSFER_KEY } from "../constants"
 import { controllerDataPayload, getControllerFromDataPayload } from "../utils"
 
 import type { Controller } from "@hotwired/stimulus"
-import type { CustomDragEventInit } from "./custom_drag_event"
-import type { DragTargetEventName, DraggableEventName } from "../types"
+
+export type DragTargetEventName = Extract<DragEventName, "drag" | "dragstart" | "dragend">
+
+export type DraggableEventName = Extract<
+  CustomDragEventName,
+  "draggable:drag" | "draggable:dragstart" | "draggable:dragend"
+>
 
 export class DraggableEvent extends CustomDragEvent {
-  protected static eventPrefix = "draggable"
+  declare readonly type: DraggableEventName
+
+  protected static eventPrefix: CustomDragEventPrefix = "draggable"
 
   static eventName(eventName: DragTargetEventName) {
     return super.eventName(eventName) as DraggableEventName
-  }
-
-  constructor(type: DraggableEventName, options: CustomDragEventInit) {
-    super(type, options)
   }
 
   set draggable(controller: Controller) {

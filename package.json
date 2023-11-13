@@ -7,26 +7,48 @@
     "type": "git",
     "url": "git+https://github.com/absaldanha/stimulus-drag-drop.git"
   },
+  "module": "dist/stimulus-drag-drop-esm.js",
+  "main": "dist/stimulus-drag-drop-umd.js",
   "types": "dist/types/index.d.ts",
-  "main": "dist/stimulus_drag_drop.umd.js",
-  "module": "dist/stimulus_drag_drop.js",
   "files": [
-    "dist/stimulus_drag_drop.js",
-    "dist/stimulus_drag_drop.umd.js",
+    "dist/*.js",
+    "dist/*.js.map",
     "dist/types/**/*"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "types": "tsc --noEmit false --declaration true --emitDeclarationOnly true --outDir dist/types",
-    "lint": "eslint . --ext .ts"
+    "build": "tsc --noEmit false --declaration true --emitDeclarationOnly true --outDir dist/types && rollup -c",
+    "lint": "eslint . --ext .ts",
+    "watch": "rollup -wc",
+    "start": "ts-node -O '{\"module\":\"commonjs\"}' tests/server.ts",
+    "test": "npm run test:unit && npm run test:browser",
+    "test:unit": "NODE_OPTIONS=--inspect web-test-runner",
+    "test:browser": "playwright test"
   },
   "devDependencies": {
+    "@open-wc/testing": "^4.0.0",
+    "@playwright/test": "^1.39.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/mocha": "^10.0.4",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
+    "@web/dev-server-esbuild": "^1.0.0",
+    "@web/test-runner": "^0.18.0",
+    "@web/test-runner-playwright": "^0.11.0",
+    "chai": "^4.3.10",
     "eslint": "^8.40.0",
-    "typescript": "^5.2.2",
-    "prettier": "^3.0.3",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.1"
+    "eslint-plugin-prettier": "^5.0.1",
+    "express": "^4.18.2",
+    "mocha": "^10.2.0",
+    "prettier": "^3.0.3",
+    "rollup": "^4.3.0",
+    "sinon": "^17.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "@hotwired/stimulus": ">= 3.2"
