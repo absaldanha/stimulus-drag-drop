@@ -1,61 +1,56 @@
-import type { Controller } from "@hotwired/stimulus"
-import type { CustomDragEvent } from "../events"
-import type { ControllerMethodName, CustomDragEventName } from "../types"
+import { CustomDragEvent, type CustomDragEventName } from "../events"
 
-export class CustomDragEventListener<
-  TEventName extends CustomDragEventName = CustomDragEventName,
-  TMethodName extends ControllerMethodName = ControllerMethodName,
-> implements EventListenerObject
-{
-  readonly controller: Controller
-  readonly eventMap: Map<TEventName, TMethodName>
-  readonly options: AddEventListenerOptions
+import type { DraggableController, DraggableMethodName } from "../draggable_controller"
+import type { DroppableController, DroppableMethodName } from "../droppable_controller"
 
-  constructor(controller: Controller, eventMap: Map<TEventName, TMethodName>, options: AddEventListenerOptions = {}) {
+export type ExtendedController = DraggableController & DroppableController
+
+export type ExtendedControllerMethodName = DraggableMethodName | DroppableMethodName
+
+const eventMap = new Map<CustomDragEventName, ExtendedControllerMethodName>([
+  ["draggable:drag", "onDrag"],
+  ["draggable:dragstart", "onDragStart"],
+  ["draggable:dragend", "onDragEnd"],
+  ["droppable:drop", "onDrop"],
+  ["droppable:dragenter", "onDragEnter"],
+  ["droppable:dragleave", "onDragLeave"],
+  ["droppable:dragover", "onDragOver"],
+])
+
+export class CustomDragEventListener implements EventListenerObject {
+  readonly controller: ExtendedController
+
+  constructor(controller: ExtendedController) {
     this.controller = controller
-    this.eventMap = eventMap
-    this.options = options
-  }
-
-  connect() {
-    this.eventNames.forEach((eventName) => {
-      this.eventTarget.addEventListener(eventName, this, this.options)
-    })
-  }
-
-  disconnect() {
-    this.eventNames.forEach((eventName) => {
-      this.eventTarget.removeEventListener(eventName, this, this.options)
-    })
-  }
-
-  handleEvent(event: CustomDragEvent) {
-    const method = this.getMethodForEvent(event)
-
-    if (typeof method === "function") {
-      method.call(this.controller, event)
-    }
   }
 
   get eventTarget() {
     return this.controller.element
   }
 
-  get eventNames(): TEventName[] {
-    return Array.from(this.eventMap.keys())
+  attachTo(eventName: CustomDragEventName, options?: AddEventListenerOptions | boolean) {
+    this.eventTarget.addEventListener(eventName, this, options)
   }
 
-  get methodNames(): TMethodName[] {
-    return Array.from(this.eventMap.values())
+  detachFrom(eventName: CustomDragEventName, options?: AddEventListenerOptions | boolean) {
+    this.eventTarget.removeEventListener(eventName, this, options)
   }
 
-  private getMethodForEvent(event: CustomDragEvent) {
-    const methodName = this.eventMap.get(event.type as TEventName)
+  handleEvent(event: CustomDragEvent) {
+    const method = this.getControllerMethodForEvent(event)
+
+    if (typeof method === "function") {
+      method.call(this.controller, event)
+    }
+  }
+
+  private getControllerMethodForEvent(event: CustomDragEvent) {
+    const methodName = eventMap.get(event.type)
 
     if (!methodName) {
       return
     }
 
-    return (this.controller as any)[methodName] as Function
+    return this.controller[methodName] as Function
   }
 }

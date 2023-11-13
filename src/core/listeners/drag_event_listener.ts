@@ -1,40 +1,47 @@
-import { CustomDragEvent } from "../events"
-import { DragEventName } from "../types"
+import { DraggableEvent, type CustomDragEvent, type DragEventName, DroppableEvent } from "../events"
 
-export class DragEventListener<TEventName extends DragEventName = DragEventName> implements EventListenerObject {
+export interface DragEventListenerDelegate {
+  shouldHandleDragEvent: (event: DragEvent) => boolean
+  willDispatchCustomEvent: (event: CustomDragEvent) => void
+}
+
+export class DragEventListener implements EventListenerObject {
+  readonly delegate: DragEventListenerDelegate
   readonly eventTarget: EventTarget
-  readonly eventNames: TEventName[]
-  readonly options: AddEventListenerOptions
 
-  constructor(eventTarget: EventTarget, eventNames: TEventName[], options: AddEventListenerOptions = {}) {
+  constructor(delegate: DragEventListenerDelegate, eventTarget: EventTarget) {
+    this.delegate = delegate
     this.eventTarget = eventTarget
-    this.eventNames = eventNames
-    this.options = options
   }
 
-  connect() {
-    this.eventNames.forEach((eventName) => {
-      this.eventTarget.addEventListener(eventName, this, this.options)
-    })
+  attachTo(eventName: DragEventName, options: AddEventListenerOptions | boolean) {
+    this.eventTarget.addEventListener(eventName, this, options)
   }
 
-  disconnect() {
-    this.eventNames.forEach((eventName) => {
-      this.eventTarget.removeEventListener(eventName, this, this.options)
-    })
+  detachFrom(eventName: DragEventName, options: AddEventListenerOptions | boolean) {
+    this.eventTarget.removeEventListener(eventName, this, options)
   }
 
   handleEvent(event: DragEvent) {
-    if (this.eventTarget !== event.target) {
+    if (!this.delegate.shouldHandleDragEvent(event)) {
       return
     }
 
-    const customEvent = this.buildCustomDragEvent(event)
+    const customEvent = this.buildCustomEvent(event)
+
+    this.delegate.willDispatchCustomEvent(customEvent)
 
     this.eventTarget.dispatchEvent(customEvent)
   }
 
-  protected buildCustomDragEvent(event: DragEvent) {
-    return CustomDragEvent.build(event)
+  private buildCustomEvent(event: DragEvent): CustomDragEvent {
+    switch (event.type as DragEventName) {
+      case "drag":
+      case "dragstart":
+      case "dragend":
+        return DraggableEvent.build(event)
+      default:
+        return DroppableEvent.build(event)
+    }
   }
 }

@@ -16,3 +16,12 @@ services:
   bash:
     <<: *common
     command: bash
+    depends_on:
+      server:
+        condition: service_started
+
+  server:
+    <<: *common
+    command: npm start
+    ports:
+      - "9000:9000"

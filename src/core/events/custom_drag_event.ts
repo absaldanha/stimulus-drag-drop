@@ -1,6 +1,17 @@
-import type { CustomDragEventName } from "../types"
+export type DragEventName = "drag" | "dragstart" | "dragend" | "dragover" | "dragenter" | "dragleave" | "drop"
 
-interface CustomDragEventDetail {
+export type CustomDragEventName =
+  | "draggable:drag"
+  | "draggable:dragstart"
+  | "draggable:dragend"
+  | "droppable:dragover"
+  | "droppable:dragenter"
+  | "droppable:dragleave"
+  | "droppable:drop"
+
+export type CustomDragEventPrefix = "draggable" | "droppable"
+
+export interface CustomDragEventDetail {
   originalEvent: DragEvent
 }
 
@@ -13,17 +24,21 @@ export class CustomDragEvent extends CustomEvent<CustomDragEventDetail> {
 
   protected originalEvent: DragEvent
 
-  protected static eventPrefix: string
+  protected static eventPrefix: CustomDragEventPrefix
 
-  static eventName(eventName: string) {
+  static eventName(eventName: DragEventName) {
     return `${this.eventPrefix}:${eventName}` as CustomDragEventName
   }
 
-  static build(event: DragEvent, options: CustomEventInit = { bubbles: true, cancelable: true }) {
-    const eventName = this.eventName(event.type)
+  static build<T extends typeof CustomDragEvent>(
+    this: T,
+    event: DragEvent,
+    options: CustomEventInit = { bubbles: true, cancelable: true },
+  ): InstanceType<T> {
+    const eventName = this.eventName(event.type as DragEventName)
     const eventOptions = { ...options, detail: { ...options.detail, originalEvent: event } }
 
-    return new this(eventName, eventOptions)
+    return new this(eventName, eventOptions) as InstanceType<T>
   }
 
   constructor(type: CustomDragEventName, options: CustomDragEventInit) {
